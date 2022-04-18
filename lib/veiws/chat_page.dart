@@ -3,6 +3,7 @@ import 'package:appchat/models/chat.dart';
 import 'package:appchat/models/message.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../models/user.dart';
 
@@ -32,13 +33,18 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Get.parameters['name'] ?? ''),
+        title: Text(
+          Get.parameters['name'] == 'sala1'
+              ? 'Sala 1'
+              : Get.parameters['name'] == 'sala2'
+                  ? "Sala 2"
+                  : "",
+        ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 53, 91, 156),
       ),
       body: Container(
         height: Get.height,
-        width: Get.width,
         decoration: const BoxDecoration(
           color: Color.fromARGB(255, 53, 91, 156),
           gradient: LinearGradient(
@@ -127,38 +133,58 @@ class MessageWidget extends StatelessWidget {
     return InkWell(
       onLongPress: () => onLongPress(),
       child: Container(
-        width: double.maxFinite,
         decoration: BoxDecoration(
-          color: message.authorUserId == User().id
-              ? Colors.green[200]
-              : Colors.white,
-          borderRadius: message.authorUserId == User().id
-              ? const BorderRadius.only(
-                  bottomRight: Radius.circular(15),
-                  bottomLeft: Radius.circular(15),
-                  topLeft: Radius.circular(15),
-                )
-              : BorderRadius.circular(10),
-        ),
+            color: message.authorUserId == User().id
+                ? Colors.green[200]
+                : Colors.white,
+            borderRadius: message.authorUserId == User().id
+                ? const BorderRadius.only(
+                    bottomRight: Radius.circular(15),
+                    bottomLeft: Radius.circular(15),
+                    topLeft: Radius.circular(15),
+                  )
+                : const BorderRadius.only(
+                    bottomRight: Radius.circular(15),
+                    bottomLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  )),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                message.authorUserId == User().id
-                    ? 'Você'
-                    : message.authorUserName,
-                style: const TextStyle(
-                  color: Colors.black,
+              Align(
+                alignment: message.authorUserId == User().id
+                    ? Alignment.topRight
+                    : Alignment.topLeft,
+                child: Text(
+                  message.authorUserId == User().id
+                      ? "Você"
+                      : message.authorUserName,
+                  style: const TextStyle(
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const SizedBox(
                 height: 8,
               ),
-              Text(
-                message.description,
-                style: const TextStyle(color: Colors.black, fontSize: 18),
+              Align(
+                alignment: message.authorUserId == User().id
+                    ? Alignment.centerRight
+                    : Alignment.centerLeft,
+                child: Text(
+                  message.description,
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
+                ),
+              ),
+              Align(
+                alignment: message.authorUserId == User().id
+                    ? Alignment.bottomLeft
+                    : Alignment.bottomRight,
+                child: Text(
+                  DateFormat("dd/MM/yy hh:mm").format(message.date),
+                ),
               )
             ],
           ),
